@@ -3,88 +3,73 @@
 @{
     ViewData["Title"] = "Basket";
 }
-<section class="esh-catalog-hero">
-    <div class="container">
-        <img class="esh-catalog-title" src="~/images/main_banner_text.png" />
+
+<div class="ui-page-head">
+    <div class="ui-container">
+        <h1 class="ui-page-head__title">Basket</h1>
+        <p class="ui-page-head__subtitle">Review the items in your basket, update quantities and continue to checkout.</p>
     </div>
-</section>
+</div>
 
-<div class="container">
-
+<div class="ui-container ui-section">
     @if (Model.BasketModel.Items.Any())
     {
         <form method="post">
-            <article class="esh-basket-titles row">
-                <br />
-                <section class="esh-basket-title col-xs-3">Product</section>
-                <section class="esh-basket-title col-xs-3 hidden-lg-down"></section>
-                <section class="esh-basket-title col-xs-2">Price</section>
-                <section class="esh-basket-title col-xs-2">Quantity</section>
-                <section class="esh-basket-title col-xs-2">Cost</section>
-            </article>
-            <div class="esh-catalog-items row">
-                <div asp-validation-summary="All" class="text-danger"></div>
-                @for (int i = 0; i < Model.BasketModel.Items.Count; i++)
-                {
-                    var item = Model.BasketModel.Items[i];
-                    <article class="esh-basket-items row">
-                        <div>
-                            <section class="esh-basket-item esh-basket-item--middle col-lg-3 hidden-lg-down">
-                                <img class="esh-basket-image" src="@item.PictureUrl" />
-                            </section>
-                            <section class="esh-basket-item esh-basket-item--middle col-xs-3">@item.ProductName</section>
-                            <section class="esh-basket-item esh-basket-item--middle col-xs-2">$ @item.UnitPrice.ToString("N2")</section>
-                            <section class="esh-basket-item esh-basket-item--middle col-xs-2">
+            <div class="ui-card">
+                <div class="ui-lines">
+                    <article class="ui-line ui-line--head">
+                        <span class="ui-line__col-title"></span>
+                        <span class="ui-line__col-title">Product</span>
+                        <span class="ui-line__col-title">Unit price</span>
+                        <span class="ui-line__col-title">Quantity</span>
+                        <span class="ui-line__col-title">Total</span>
+                    </article>
+
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    @for (int i = 0; i < Model.BasketModel.Items.Count; i++)
+                    {
+                        var item = Model.BasketModel.Items[i];
+                        <article class="ui-line">
+                            <div class="ui-line__media">
+                                <img class="ui-line__image" src="@item.PictureUrl" alt="@item.ProductName" />
+                            </div>
+                            <div class="ui-line__name">@item.ProductName</div>
+                            <div class="ui-line__col" data-label="Unit price">$ @item.UnitPrice.ToString("N2")</div>
+                            <div class="ui-line__col" data-label="Quantity">
                                 <input type="hidden" name="@("Items[" + i + "].Id")" value="@item.Id" />
-                                <input type="number" class="esh-basket-input" min="0" name="@("Items[" + i + "].Quantity")" value="@item.Quantity" />
-                            </section>
-                            <section class="esh-basket-item esh-basket-item--middle esh-basket-item--mark col-xs-2">$ @Math.Round(item.Quantity * item.UnitPrice, 2).ToString("N2")</section>
-                        </div>
-                        <div class="row">
-
-                        </div>
-                    </article>
-                }
-
-                <div class="container">
-                    <article class="esh-basket-titles esh-basket-titles--clean row">
-                        <section class="esh-basket-title col-xs-10"></section>
-                        <section class="esh-basket-title col-xs-2">Total</section>
-                    </article>
-
-                    <article class="esh-basket-items row">
-                        <section class="esh-basket-item col-xs-10"></section>
-                        <section class="esh-basket-item esh-basket-item--mark col-xs-2">$ @Model.BasketModel.Total().ToString("N2")</section>
-                    </article>
-
-                    <article class="esh-basket-items row">
-                        <section class="esh-basket-item col-xs-7"></section>
-                    </article>
+                                <input type="number" class="ui-quantity" min="0" name="@("Items[" + i + "].Quantity")" value="@item.Quantity" />
+                            </div>
+                            <div class="ui-line__col ui-line__col--strong" data-label="Total">$ @Math.Round(item.Quantity * item.UnitPrice, 2).ToString("N2")</div>
+                        </article>
+                    }
                 </div>
-                <div class="row">
-                    <section class="esh-basket-item col-xs-1">
-                        <a asp-page="/Index" class="btn esh-basket-checkout text-white">[ Continue Shopping ]</a>
-                    </section>
-                    <section class="esh-basket-item col-xs-push-7 col-xs-4">
+            </div>
 
-                        <button class="btn esh-basket-checkout" name="updatebutton" value="" type="submit"
-                                asp-page-handler="Update">
-                            [ Update ]
-                        </button>
-                        <a asp-page="./Checkout" class="btn esh-basket-checkout">[ Checkout ]</a>
-                    </section>
+            <div class="ui-summary">
+                <div class="ui-summary__row">
+                    <span class="ui-summary__row-label">Total</span>
+                    <span class="ui-summary__row-value">$ @Model.BasketModel.Total().ToString("N2")</span>
+                </div>
+                <div class="ui-summary__actions">
+                    <button class="ui-button ui-button--block" name="updatebutton" value="" type="submit"
+                            asp-page-handler="Update">
+                        [ Update ]
+                    </button>
+                    <a asp-page="./Checkout" class="ui-button ui-button--block">[ Checkout ]</a>
+                </div>
+                <div class="ui-summary__note">
+                    <a asp-page="/Index" class="ui-link">Continue shopping</a>
                 </div>
             </div>
         </form>
     }
     else
     {
-        <h3 class="esh-catalog-items row">
-            Basket is empty.
-        </h3>
-
-        <section class="esh-basket-item">
-            <a asp-page="/Index" class="btn esh-basket-checkout text-white">[ Continue Shopping ]</a>
-        </section>
+        <div class="ui-empty">
+            <h2 class="ui-empty__title">Your basket is empty</h2>
+            <p class="ui-empty__text">Browse the catalog and add the products you like to see them here.</p>
+            <a asp-page="/Index" class="ui-button">Continue shopping</a>
+        </div>
     }
 </div>

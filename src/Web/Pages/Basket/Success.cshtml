@@ -4,14 +4,17 @@
     ViewData["Title"] = "Checkout Complete";
 }
 
-<section class="esh-catalog-hero">
-    <div class="container">
-        <img class="esh-catalog-title" src="~/images/main_banner_text.png" />
+<div class="ui-container ui-section">
+    <div class="ui-card">
+        <div class="ui-card__body">
+            <h1 class="ui-card__title">Thanks for your order!</h1>
+            <p class="ui-card__text">
+                Your order has been submitted. You can follow its status in
+                <a class="ui-link" asp-controller="Order" asp-action="MyOrders">my orders</a>.
+            </p>
+            <div class="ui-actions">
+                <a asp-page="/Index" class="ui-button">Continue shopping</a>
+            </div>
+        </div>
     </div>
-</section>
-
-<div class="container">
-    <h1>Thanks for your Order!</h1>
-
-    <a asp-page="/Index">Continue Shopping...</a>
 </div>

@@ -1,5 +1,22 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@{
+    var currentPath = (Context.Request.Path.Value ?? "/").ToLowerInvariant();
+    var isAuthenticated = Context.User.Identity?.IsAuthenticated ?? false;
+    var canManageCatalog = Context.User.IsInRole(BlazorShared.Authorization.Constants.Roles.ADMINISTRATORS)
+        || Context.User.IsInRole(BlazorShared.Authorization.Constants.Roles.PRODUCT_MANAGERS);
+
+    string NavLink(string prefix)
+        => prefix == "/"
+            ? (currentPath == "/" ? "is-active" : string.Empty)
+            : (currentPath.StartsWith(prefix, StringComparison.Ordinal) ? "is-active" : string.Empty);
+
+    var catalogNavClass = NavLink("/");
+    var ordersNavClass = NavLink("/order");
+    var accountNavClass = NavLink("/manage");
+    var adminNavClass = NavLink("/admin");
+    var privacyNavClass = NavLink("/privacy");
+}
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,48 +24,86 @@
     <environment names="Development,Docker">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/app.css" />
-        <link rel="stylesheet" href="~/css/app.component.css" />
-        <link rel="stylesheet" href="~/css/shared/components/header/header.css" />
-        <link rel="stylesheet" href="~/css/shared/components/identity/identity.css" />
-        <link rel="stylesheet" href="~/css/shared/components/pager/pager.css" />
-        <link rel="stylesheet" href="~/css/basket/basket.component.css" />
-        <link rel="stylesheet" href="~/css/basket/basket-status/basket-status.component.css" />
         <link rel="stylesheet" href="~/css/catalog/catalog.component.css" />
-        <link rel="stylesheet" href="~/css/orders/orders.component.css" />
+        <link rel="stylesheet" href="~/css/theme.css" />
+        <link rel="stylesheet" href="~/css/storefront.css" />
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/storefront.css" asp-append-version="true" />
     </environment>
 </head>
 <body>
-    <div class="esh-app-wrapper">
-        <header class="esh-app-header">
-            <div class="container">
-                <article class="row">
-                    <section class="col-lg-7 col-md-6 col-xs-12">
-                        <a asp-area="" asp-page="/Index">
-                            <img src="~/images/brand.png" alt="eShop On Web" />
-                        </a>
-                    </section>
+    <header class="ui-header">
+        <div class="ui-header__bar">
+            <div class="ui-container ui-header__inner">
+                <a class="ui-brand" asp-area="" asp-page="/Index" aria-label="eShopOnWeb home">
+                    <img class="ui-brand__logo" src="~/images/brand.png" alt="eShopOnWeb" />
+                </a>
+                <div class="ui-header__actions">
                     <partial name="_LoginPartial" />
-                </article>
+                </div>
             </div>
-        </header>
+        </div>
+        <nav class="ui-nav" aria-label="Main navigation">
+            <div class="ui-container ui-nav__inner">
+                <a class="ui-nav__link @catalogNavClass" asp-area="" asp-page="/Index">Catalog</a>
+                @if (isAuthenticated)
+                {
+                    <a class="ui-nav__link @ordersNavClass" asp-controller="Order" asp-action="MyOrders">My orders</a>
+                    <a class="ui-nav__link @accountNavClass" asp-controller="Manage" asp-action="MyAccount">My account</a>
+                }
+                @if (canManageCatalog)
+                {
+                    <a class="ui-nav__link @adminNavClass" asp-page="/Admin/Index">Admin</a>
+                }
+                <a class="ui-nav__link @privacyNavClass" asp-area="" asp-page="/Privacy">Privacy</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="ui-main">
         @RenderBody()
-        <footer class="esh-app-footer footer">
-            <div class="container">
-                <article class="row">
-                    <section class="col-sm-6"></section>
-                    <section class="col-sm-6">
-                        <div class="esh-app-footer-text hidden-xs"> e-ShopOnWeb. All rights reserved </div>
-                    </section>
-                </article>
+    </main>
+
+    <footer class="ui-footer">
+        <div class="ui-container ui-footer__inner">
+            <div>
+                <div class="ui-footer__brand">
+                    <img class="ui-footer__logo" src="~/images/brand.png" alt="eShopOnWeb" />
+                </div>
+                <p class="ui-footer__text">
+                    Storefront of the eShopOnWeb reference application — apparel, mugs and accessories for .NET developers.
+                </p>
             </div>
-        </footer>
-    </div>
+            <div>
+                <h2 class="ui-footer__title">Shop</h2>
+                <a class="ui-footer__link" asp-area="" asp-page="/Index">Catalog</a>
+                <a class="ui-footer__link" asp-area="" asp-page="/Basket/Index">Basket</a>
+            </div>
+            <div>
+                <h2 class="ui-footer__title">Account</h2>
+                @if (isAuthenticated)
+                {
+                    <a class="ui-footer__link" asp-controller="Order" asp-action="MyOrders">My orders</a>
+                    <a class="ui-footer__link" asp-controller="Manage" asp-action="MyAccount">My account</a>
+                }
+                else
+                {
+                    <a class="ui-footer__link" asp-area="Identity" asp-page="/Account/Login">Log in</a>
+                }
+                <a class="ui-footer__link" asp-area="" asp-page="/Privacy">Privacy policy</a>
+            </div>
+        </div>
+        <div class="ui-container ui-footer__bottom">
+            e-ShopOnWeb. All rights reserved
+        </div>
+    </footer>
+
     <environment names="Development,Docker">
         <script src="~/lib/jquery/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>

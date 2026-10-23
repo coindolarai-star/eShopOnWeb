@@ -1,61 +1,40 @@
-﻿@if (Context!.User!.Identity!.IsAuthenticated)
+@{
+    var userName = Context?.User?.Identity?.Name ?? string.Empty;
+    var initial = string.IsNullOrWhiteSpace(userName) ? "?" : userName.Trim().Substring(0, 1).ToUpperInvariant();
+    var canManageCatalog = User.IsInRole(BlazorShared.Authorization.Constants.Roles.ADMINISTRATORS)
+        || User.IsInRole(BlazorShared.Authorization.Constants.Roles.PRODUCT_MANAGERS);
+}
+
+@if (Context!.User!.Identity!.IsAuthenticated)
 {
-    <section class="col-lg-4 col-md-5 col-xs-12">
-        <div class="esh-identity">
-            <form asp-area="Identity" asp-page="/Account/Logout" method="post" id="logoutForm" class="navbar-right">
-                <section class="esh-identity-section">
-                    <div class="esh-identity-name">@Context.User.Identity.Name</div>
-                    <img class="esh-identity-image" src="~/images/arrow-down.png">
-                </section>
-                <section class="esh-identity-drop">
-                    @if (User.IsInRole(BlazorShared.Authorization.Constants.Roles.ADMINISTRATORS) 
-                        || User.IsInRole(BlazorShared.Authorization.Constants.Roles.PRODUCT_MANAGERS))
-                    {
-                        <a class="esh-identity-item"
-                           asp-page="/Admin/Index">
-                            <div class="esh-identity-name esh-identity-name--upper">Admin</div>
-                        </a>
-                    }
-                    <a class="esh-identity-item"
-                       asp-controller="Order"
-                       asp-action="MyOrders">
-                        <div class="esh-identity-name esh-identity-name--upper">My orders</div>
-                    </a>
-                    <a class="esh-identity-item"
-                       asp-controller="Manage"
-                       asp-action="MyAccount">
-                        <div class="esh-identity-name esh-identity-name--upper">My account</div>
-                    </a>
-                    <a class="esh-identity-item" href="javascript:document.getElementById('logoutForm').submit()">
-                        <div class="esh-identity-name esh-identity-name--upper">Log Out</div>
-                        <img class="esh-identity-image" src="~/images/logout.png">
-                    </a>
-                </section>
-            </form>
-        </div>
-    </section>
+    <div class="ui-account">
+        <form asp-area="Identity" asp-page="/Account/Logout" method="post" id="logoutForm" class="ui-account__form">
+            <button type="button" class="ui-account__trigger" title="@userName">
+                <span class="ui-account__avatar" aria-hidden="true">@initial</span>
+                <span class="ui-account__label">@userName</span>
+                <span class="ui-account__caret" aria-hidden="true"></span>
+            </button>
+            <div class="ui-account__menu">
+                <div class="ui-account__menu-head">
+                    <div class="ui-account__menu-title">Signed in as</div>
+                    <div class="ui-account__menu-name">@userName</div>
+                </div>
+                @if (canManageCatalog)
+                {
+                    <a class="ui-account__item" asp-page="/Admin/Index">Admin</a>
+                }
+                <a class="ui-account__item" asp-controller="Order" asp-action="MyOrders">My orders</a>
+                <a class="ui-account__item" asp-controller="Manage" asp-action="MyAccount">My account</a>
+                <button type="submit" class="ui-account__item ui-account__item--danger">Log out</button>
+            </div>
+        </form>
+    </div>
 
-    <section class="col-lg-1 col-xs-12">
-        @await Component.InvokeAsync("Basket")
-    </section>
-
+    @await Component.InvokeAsync("Basket")
 }
 else
 {
-    <section class="col-lg-4 col-md-5 col-xs-12">
-        <div class="esh-identity">
-            <section class="esh-identity-section">
-                <div class="esh-identity-item">
+    <a class="ui-button ui-button--secondary ui-button--small" asp-area="Identity" asp-page="/Account/Login">Log in</a>
 
-                    <a asp-area="Identity" asp-page="/Account/Login" class="esh-identity-name esh-identity-name--upper">
-                        Login
-                    </a>
-                </div>
-            </section>
-        </div>
-    </section>
-
-    <section class="col-lg-1 col-xs-12">
-        @await Component.InvokeAsync("Basket")
-    </section>
+    @await Component.InvokeAsync("Basket")
 }

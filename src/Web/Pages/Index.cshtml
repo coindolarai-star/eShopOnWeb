@@ -3,43 +3,65 @@
     ViewData["Title"] = "Catalog";
     @model IndexModel
 }
-<section class="esh-catalog-hero">
-    <div class="container">
-        <img class="esh-catalog-title" src="~/images/main_banner_text.png" />
-    </div>
-</section>
-<section class="esh-catalog-filters">
-    <div class="container">
-        <form method="get">
-            <label class="esh-catalog-label" data-title="brand">
-                <select asp-for="@Model.CatalogModel.BrandFilterApplied" asp-items="@Model.CatalogModel.Brands" class="esh-catalog-filter"></select>
-            </label>
-            <label class="esh-catalog-label" data-title="type">
-                <select asp-for="@Model.CatalogModel.TypesFilterApplied" asp-items="@Model.CatalogModel.Types" class="esh-catalog-filter"></select>
-            </label>
-            <input class="esh-catalog-send" type="image" src="~/images/arrow-right.svg" />
-        </form>
-    </div>
-</section>
-<div class="container">
-    @if (Model.CatalogModel.CatalogItems.Any())
-    {
-        <partial name="_pagination" for="CatalogModel.PaginationInfo" />
 
-        <div class="esh-catalog-items row">
-            @foreach (var catalogItem in Model.CatalogModel.CatalogItems)
-            {
-                <div class="esh-catalog-item col-md-4">
+<section class="ui-hero">
+    <div class="ui-container ui-hero__inner">
+        <div class="ui-hero__content">
+            <span class="ui-hero__eyebrow">.NET collection</span>
+            <h1 class="ui-hero__title">All t-shirts on sale this weekend</h1>
+            <p class="ui-hero__text">
+                Apparel, mugs and accessories for .NET developers. Browse the catalog,
+                filter by brand or type, and add your favourites to the basket.
+            </p>
+            <div class="ui-hero__actions">
+                <a class="ui-button ui-hero__cta" href="#catalog">Shop the catalog</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="ui-container">
+    <section class="ui-toolbar">
+        <form method="get" class="ui-toolbar__form">
+            <div class="ui-toolbar__field">
+                <label class="ui-toolbar__label" for="brandFilter">Brand</label>
+                <select id="brandFilter" asp-for="@Model.CatalogModel.BrandFilterApplied" asp-items="@Model.CatalogModel.Brands" class="ui-select"></select>
+            </div>
+            <div class="ui-toolbar__field">
+                <label class="ui-toolbar__label" for="typeFilter">Type</label>
+                <select id="typeFilter" asp-for="@Model.CatalogModel.TypesFilterApplied" asp-items="@Model.CatalogModel.Types" class="ui-select"></select>
+            </div>
+            <div class="ui-toolbar__submit">
+                <button type="submit" class="ui-button">Filter</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="ui-results" id="catalog">
+        @if (Model.CatalogModel.CatalogItems.Any())
+        {
+            <div class="ui-results__head">
+                <h2 class="ui-results__title">Products</h2>
+            </div>
+
+            <partial name="_pagination" for="CatalogModel.PaginationInfo" />
+
+            <div class="ui-grid">
+                @foreach (var catalogItem in Model.CatalogModel.CatalogItems)
+                {
                     <partial name="_product" for="@catalogItem" />
-                </div>
-            }
-        </div>
-        <partial name="_pagination" for="CatalogModel.PaginationInfo" />
-    }
-    else
-    {
-        <div class="esh-catalog-items row">
-            THERE ARE NO RESULTS THAT MATCH YOUR SEARCH
-        </div>
-    }
+                }
+            </div>
+
+            <partial name="_pagination" for="CatalogModel.PaginationInfo" />
+        }
+        else
+        {
+            <div class="ui-empty">
+                <h2 class="ui-empty__title">No products found</h2>
+                <p class="ui-empty__text">There are no results that match your selection. Try a different brand or type.</p>
+                <a class="ui-button" asp-page="/Index">Clear filters</a>
+            </div>
+        }
+    </section>
 </div>

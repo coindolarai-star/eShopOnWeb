@@ -3,36 +3,48 @@
     ViewData["Title"] = "My Order History";
 }
 
-<div class="esh-orders">
-    <div class="container">
-        <h1>@ViewData["Title"]</h1>
-        <article class="esh-orders-titles row">
-            <section class="esh-orders-title col-xs-2">Order number</section>
-            <section class="esh-orders-title col-xs-4">Date</section>
-            <section class="esh-orders-title col-xs-2">Total</section>
-            <section class="esh-orders-title col-xs-2">Status</section>
-            <section class="esh-orders-title col-xs-2"></section>
-        </article>
-        @if (Model != null && Model.Any())
-        {
+<div class="ui-page-head">
+    <div class="ui-container">
+        <h1 class="ui-page-head__title">My orders</h1>
+        <p class="ui-page-head__subtitle">Track the status of the orders you have placed.</p>
+    </div>
+</div>
+
+<div class="ui-container ui-section">
+    @if (Model != null && Model.Any())
+    {
+        <div class="ui-table">
+            <div class="ui-table__row ui-table__row--head">
+                <span class="ui-table__cell">Order number</span>
+                <span class="ui-table__cell">Date</span>
+                <span class="ui-table__cell">Total</span>
+                <span class="ui-table__cell">Status</span>
+                <span class="ui-table__cell">Actions</span>
+            </div>
             @foreach (var item in Model)
             {
-                <article class="esh-orders-items row">
-                    <section class="esh-orders-item col-xs-2">@Html.DisplayFor(modelItem => item.OrderNumber)</section>
-                    <section class="esh-orders-item col-xs-4">@Html.DisplayFor(modelItem => item.OrderDate)</section>
-                    <section class="esh-orders-item col-xs-2">$ @Html.DisplayFor(modelItem => item.Total)</section>
-                    <section class="esh-orders-item col-xs-2">@Html.DisplayFor(modelItem => item.Status)</section>
-                    <section class="esh-orders-item col-xs-1">
-                        <a class="esh-orders-link" asp-controller="Order" asp-action="Detail" asp-route-orderId="@item.OrderNumber">Detail</a>
-                    </section>
-                    <section class="esh-orders-item col-xs-1">
+                <div class="ui-table__row">
+                    <span class="ui-table__cell ui-table__cell--strong" data-label="Order number">@Html.DisplayFor(modelItem => item.OrderNumber)</span>
+                    <span class="ui-table__cell" data-label="Date">@Html.DisplayFor(modelItem => item.OrderDate)</span>
+                    <span class="ui-table__cell ui-table__cell--strong" data-label="Total">$ @Html.DisplayFor(modelItem => item.Total)</span>
+                    <span class="ui-table__cell" data-label="Status"><span class="ui-badge">@Html.DisplayFor(modelItem => item.Status)</span></span>
+                    <span class="ui-table__cell ui-table__actions" data-label="Actions">
+                        <a class="ui-link" asp-controller="Order" asp-action="Detail" asp-route-orderId="@item.OrderNumber">Detail</a>
                         @if (item.Status.ToLower() == "submitted")
-                    {
-                            <a class="esh-orders-link" asp-controller="Order" asp-action="cancel" asp-route-orderId="@item.OrderNumber">Cancel</a>
+                        {
+                            <a class="ui-link" asp-controller="Order" asp-action="cancel" asp-route-orderId="@item.OrderNumber">Cancel</a>
                         }
-                    </section>
-                </article>
+                    </span>
+                </div>
             }
-        }
-    </div>
+        </div>
+    }
+    else
+    {
+        <div class="ui-empty">
+            <h2 class="ui-empty__title">No orders yet</h2>
+            <p class="ui-empty__text">Orders you place will show up here.</p>
+            <a class="ui-button" asp-page="/Index">Browse the catalog</a>
+        </div>
+    }
 </div>

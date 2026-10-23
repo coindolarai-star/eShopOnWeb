@@ -2,10 +2,14 @@
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container">
-    <h2>Manage your account</h2>
-    <h4>Change your account settings</h4>
-    <hr />
+<div class="ui-page-head">
+    <div class="ui-container">
+        <h1 class="ui-page-head__title">Manage your account</h1>
+        <p class="ui-page-head__subtitle">Change your account settings.</p>
+    </div>
+</div>
+
+<div class="ui-container ui-section">
     <div class="row">
         <div class="col-md-3">
             <partial name="_ManageNav" />
@@ -19,4 +23,3 @@
 @section Scripts {
     @RenderSection("Scripts", required: false)
 }
-        

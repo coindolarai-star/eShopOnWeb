@@ -1,77 +1,77 @@
 ﻿@model OrderDetailViewModel
 @{
-    ViewData["Title"] = "My Order History";
-}
-@{
     ViewData["Title"] = "Order Detail";
 }
 
-<div class="esh-orders-detail">
-    <div class="container">
-        <section class="esh-orders-detail-section">
-            <article class="esh-orders-detail-titles row">
-                <section class="esh-orders-detail-title col-xs-3">Order number</section>
-                <section class="esh-orders-detail-title col-xs-3">Date</section>
-                <section class="esh-orders-detail-title col-xs-2">Total</section>
-                <section class="esh-orders-detail-title col-xs-3">Status</section>
-            </article>
+<div class="ui-page-head">
+    <div class="ui-container">
+        <h1 class="ui-page-head__title">Order @Model.OrderNumber</h1>
+        <p class="ui-page-head__subtitle">Placed on @Model.OrderDate</p>
+    </div>
+</div>
 
-            <article class="esh-orders-detail-items row">
-                <section class="esh-orders-detail-item col-xs-3">@Model.OrderNumber</section>
-                <section class="esh-orders-detail-item col-xs-3">@Model.OrderDate</section>
-                <section class="esh-orders-detail-item col-xs-2">$@Model.Total.ToString("N2")</section>
-                <section class="esh-orders-detail-item col-xs-3">@Model.Status</section>
-            </article>
-        </section>
+<div class="ui-container ui-section">
+    <div class="ui-stack">
+        <div class="ui-card">
+            <div class="ui-card__body">
+                <div class="ui-order-meta">
+                    <div>
+                        <span class="ui-order-meta__label">Order number</span>
+                        <span class="ui-order-meta__value">@Model.OrderNumber</span>
+                    </div>
+                    <div>
+                        <span class="ui-order-meta__label">Date</span>
+                        <span class="ui-order-meta__value">@Model.OrderDate</span>
+                    </div>
+                    <div>
+                        <span class="ui-order-meta__label">Status</span>
+                        <span class="ui-order-meta__value"><span class="ui-badge">@Model.Status</span></span>
+                    </div>
+                    <div>
+                        <span class="ui-order-meta__label">Shipping address</span>
+                        <span class="ui-order-meta__value">
+                            @Model.ShippingAddress?.Street, @Model.ShippingAddress?.City, @Model.ShippingAddress?.Country
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <section class="esh-orders-detail-section">
-            <article class="esh-orders-detail-titles row">
-                <section class="esh-orders-detail-title col-xs-12">Shipping Address</section>
-            </article>
+        <div class="ui-card">
+            <div class="ui-card__body">
+                <h2 class="ui-card__title">Items</h2>
+            </div>
+            <div class="ui-lines">
+                <div class="ui-line ui-line--head">
+                    <span class="ui-line__col-title"></span>
+                    <span class="ui-line__col-title">Product</span>
+                    <span class="ui-line__col-title">Unit price</span>
+                    <span class="ui-line__col-title">Quantity</span>
+                    <span class="ui-line__col-title">Total</span>
+                </div>
+                @foreach (var item in Model.OrderItems)
+                {
+                    <div class="ui-line">
+                        <div class="ui-line__media">
+                            <img class="ui-line__image" src="@item.PictureUrl" alt="@item.ProductName" />
+                        </div>
+                        <div class="ui-line__name">@item.ProductName</div>
+                        <div class="ui-line__col" data-label="Unit price">$ @item.UnitPrice.ToString("N2")</div>
+                        <div class="ui-line__col" data-label="Quantity">@item.Units</div>
+                        <div class="ui-line__col ui-line__col--strong" data-label="Total">$ @Math.Round(item.Units * item.UnitPrice, 2).ToString("N2")</div>
+                    </div>
+                }
+            </div>
+        </div>
 
-            <article class="esh-orders-detail-items row">
-                <section class="esh-orders-detail-item col-xs-12">@Model.ShippingAddress?.Street</section>
-            </article>
-
-            <article class="esh-orders-detail-items row">
-                <section class="esh-orders-detail-item col-xs-12">@Model.ShippingAddress?.City</section>
-            </article>
-
-            <article class="esh-orders-detail-items row">
-                <section class="esh-orders-detail-item col-xs-12">@Model.ShippingAddress?.Country</section>
-            </article>
-        </section>
-
-        <section class="esh-orders-detail-section">
-            <article class="esh-orders-detail-titles row">
-                <section class="esh-orders-detail-title col-xs-12">ORDER DETAILS</section>
-            </article>
-
-            @for (int i = 0; i < Model.OrderItems.Count; i++)
-            {
-                var item = Model.OrderItems[i];
-                <article class="esh-orders-detail-items esh-orders-detail-items--border row">
-                    <section class="esh-orders-detail-item col-md-4 hidden-md-down">
-                        <img class="esh-orders-detail-image" src="@item.PictureUrl">
-                    </section>
-                    <section class="esh-orders-detail-item esh-orders-detail-item--middle col-xs-3">@item.ProductName</section>
-                    <section class="esh-orders-detail-item esh-orders-detail-item--middle col-xs-1">$ @item.UnitPrice.ToString("N2")</section>
-                    <section class="esh-orders-detail-item esh-orders-detail-item--middle col-xs-1">@item.Units</section>
-                    <section class="esh-orders-detail-item esh-orders-detail-item--middle col-xs-2">$ @Math.Round(item.Units * item.UnitPrice, 2).ToString("N2")</section>
-                </article>
-            }
-        </section>
-
-        <section class="esh-orders-detail-section esh-orders-detail-section--right">
-            <article class="esh-orders-detail-titles esh-basket-titles--clean row">
-                <section class="esh-orders-detail-title col-xs-9"></section>
-                <section class="esh-orders-detail-title col-xs-2">TOTAL</section>
-            </article>
-
-            <article class="esh-orders-detail-items row">
-                <section class="esh-orders-detail-item col-xs-9"></section>
-                <section class="esh-orders-detail-item esh-orders-detail-item--mark col-xs-2">$ @Model.Total.ToString("N2")</section>
-            </article>
-        </section>
+        <div class="ui-summary">
+            <div class="ui-summary__row">
+                <span class="ui-summary__row-label">Order total</span>
+                <span class="ui-summary__row-value">$ @Model.Total.ToString("N2")</span>
+            </div>
+            <div class="ui-summary__note">
+                <a class="ui-link" asp-controller="Order" asp-action="MyOrders">Back to my orders</a>
+            </div>
+        </div>
     </div>
 </div>
